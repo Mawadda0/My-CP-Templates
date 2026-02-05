@@ -27,7 +27,7 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 // "سُبْحَانَكَ لا عِلْمَ لَنَا إِلَّا مَا عَلَّمْتَنَا إِنَّكَ أَنْتَ الْعَلِيمُ الْحَكِيمُ"
  
 const int N = 510; // an initial size of array
-int n, m;
+int n, m; // global for more usage
 int dist[N][N]{0}; // adj matrix for calculating distance 
  
 void solve()
