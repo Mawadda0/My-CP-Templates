@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
+
 using namespace std;
 using namespace __gnu_pbds;
 
@@ -23,8 +24,9 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 // "سُبْحَانَكَ لا عِلْمَ لَنَا إِلَّا مَا عَلَّمْتَنَا إِنَّكَ أَنْتَ الْعَلِيمُ الْحَكِيمُ"
 
+const int N = 200005;
 
-map<int, vector<int>> gr;
+vector<int> gr[N];
 vector<bool> vis;
 
 void dfs_itr(int node) // dfs iterative
@@ -32,14 +34,16 @@ void dfs_itr(int node) // dfs iterative
     stack<int> st;
     st.push(node);
     vis[node] = 1;
-    while(!st.empty())
+
+    while (!st.empty())
     {
         int tp = st.top();
         st.pop();
         cout << tp << " ";
-        for(int i : gr[tp])
+
+        for (int i : gr[tp])
         {
-            if(!vis[i])
+            if (!vis[i])
             {
                 st.push(i);
                 vis[i] = 1;
@@ -53,9 +57,10 @@ void dfs_rec(int node) // dfs recursive
 {
     vis[node] = 1;
     cout << node << " ";
-    for(int i : gr[node])
+
+    for (int i : gr[node])
     {
-        if(!vis[i])
+        if (!vis[i])
         {
             dfs_rec(i);
         }
@@ -67,14 +72,16 @@ void bfs_itr(int node) // bfs iterative
     queue<int> q;
     q.push(node);
     vis[node] = 1;
-    while(!q.empty())
+
+    while (!q.empty())
     {
         int tp = q.front();
         q.pop();
         cout << tp << " ";
-        for(int i : gr[tp])
+
+        for (int i : gr[tp])
         {
-            if(!vis[i])
+            if (!vis[i])
             {
                 q.push(i);
                 vis[i] = 1;
@@ -89,24 +96,25 @@ void bfs_rec(int node) // bfs recursive
     // Still thinking how to implement...
 }
 
-
 void solve()
 {
-    gr.clear(), vis.clear();
+    int n, m;
+    cin >> n >> m;
 
-    int n, m; cin >> n >> m;
     vis.assign(n + 1, false);
 
-    int op = m;
-    while(op--)
+    for (int i = 1; i <= n; i++)
+        gr[i].clear();
+
+    while (m--)
     {
-        int x, y; cin >> x >> y;
+        int x, y;
+        cin >> x >> y;
         gr[x].push_back(y);
         gr[y].push_back(x);
     }
 
-    auto it = gr.begin();
-    int root = gr.begin()->F;
+    int root = 1;
 
     dfs_itr(root);
     fill(all(vis), false);
@@ -121,13 +129,15 @@ void solve()
 
 signed main()
 {
-    ios_base::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+
     int tc = 1;
-    //cin >> tc;
+    // cin >> tc;
     while (tc--)
     {
-        solve(); 
-        if(tc) cout << nl;
+        solve();
+        if (tc) cout << nl;
     }
     return 0;
 }
