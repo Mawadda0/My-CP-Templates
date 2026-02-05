@@ -18,6 +18,13 @@ This repository contains my daily-use templates in **C++** throughout my competi
 * Fast power & Mod power
 > - I will add more templates in the future
 
+
+### Graph Theory
+
+* BFS & DFS
+* BFS & DFS
+* Dijkstra
+
 ---
 
 ## ⚡ Usage
