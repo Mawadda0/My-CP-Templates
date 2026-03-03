@@ -24,6 +24,13 @@ This repository contains my daily-use templates in **C++** throughout my competi
 * BFS & DFS
 * BFS & DFS
 * Dijkstra
+* Floyed
+* bellman
+* DSU
+
+### Range Query
+
+* Semgent Tree
 
 ---
 
