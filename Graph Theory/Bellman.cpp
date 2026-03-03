@@ -27,6 +27,7 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 void solve()
 {
+    // this implementation solves a problem needs to detect if there is a negative cycle and print it
     int n, m; // n = number of nodes, m = number of edges
     cin >> n >> m;
     

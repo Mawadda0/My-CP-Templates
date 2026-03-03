@@ -30,8 +30,7 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 // Used for efficient connectivity queries in graphs
 struct DSU
 {
-    vector<int> parent, dpth; // parent array for union-find operations
-    // Note: dpth is declared but not used in this implementation
+    vector<int> parent; // parent array for union-find operations
     
     // Constructor: initialize DSU with n elements
     DSU(int n)
@@ -106,7 +105,7 @@ void solve()
             mst += w; // Add edge weight to total MST weight
     }
     
-    // Output the total weight of the Minimum Spanning Tree
+    // total weight of the Minimum Spanning Tree
     cout << mst;
 }
 
@@ -116,7 +115,7 @@ signed main()
     cin.tie(nullptr);
     cout.tie(nullptr);
     int tc = 1;
-    // cin >> tc; // Uncomment for multiple test cases
+    // cin >> tc;
     while (tc--)
     {
         solve();
