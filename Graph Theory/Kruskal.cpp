@@ -54,7 +54,7 @@ struct DSU
     }
     
     // Union operation: merge sets containing a and b
-    // Returns true if sets were merged, false if they were already in same set
+    // Returns true if sets were merged, false if they were already in the same set
     bool unite(int a, int b)
     {
         a = find(a); // Find root of a's set
