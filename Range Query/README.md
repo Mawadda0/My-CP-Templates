@@ -38,14 +38,14 @@ This value must NOT affect the result when merged.
 
 | Operation      | Merge Function | Initial Value (Neutral Element)  |
 | -------------- | -------------- | -------------------------------- |
-| Sum            | a + b          | `0`                              |
+| Sum            | (a + b)        | `0`                              |
 | Minimum        | min(a, b)      | `+INF`                           |
 | Maximum        | max(a, b)      | `-INF`                           |
 | GCD            | gcd(a, b)      | `0`                              |
-| XOR            | a ^ b          | `0`                              |
-| OR             | a | b          | `0`                              |
-| AND            | a & b          | `(1 << bits) - 1` (all bits = 1) |
-| Multiplication | a * b          | `1`                              |
+| XOR            | (a ^ b)        | `0`                              |
+| OR             | (a | b)        | `0`                              |
+| AND            | (a & b)        | `(1 << bits) - 1` (all bits = 1) |
+| Multiplication | (a * b)        | `1`                              |
 
 ---
 
