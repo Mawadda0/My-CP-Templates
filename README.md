@@ -16,21 +16,24 @@ This repository contains my daily-use templates in **C++** throughout my competi
 * Prime factors
 * Factorial with mod
 * Fast power & Mod power
+* SPF (Smallest prime factor)
+* Combinatorics (combination and permutation)
 > - I will add more templates in the future
 
 
 ### Graph Theory
 
 * BFS & DFS
-* BFS & DFS
 * Dijkstra
 * Floyed
-* bellman
+* Bellman
+* Kruksal
 * DSU
 
 ### Range Query
 
 * Semgent Tree
+* Segment Tree with Lazy Propagation
 
 ---
 
