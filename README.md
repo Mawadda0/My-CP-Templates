@@ -24,6 +24,8 @@ This repository contains my daily-use templates in **C++** throughout my competi
 ### Graph Theory
 
 * BFS & DFS
+* DFS implementatin in details
+* BFS implementatin in details
 * Dijkstra
 * Floyed
 * Bellman
