@@ -25,159 +25,152 @@ template <class T>
 using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 const int N = 2e5 + 5;
-
-struct DFS
+vector<vector<int>> adj; // holdes the nodes and their adjacency
+ 
+ 
+void graph_rep(int n, int m)
 {
-    int n;
-    vector<int> adj[N];
-    vector<bool> vis;
-    vector<int> parent;
-    vector<int> topo;
-    vector<int> dist;
-
-    DFS(int n)
+    adj.assign(n + 1, {});
+    int u, v, t;
+    for(int i = 1; i <= m; i++)
     {
-        this->n = n;
-        vis.assign(n, false);
-        parent.assign(n, -1);
-        dist.assign(n, 0);
-    }
-
-    void addEdge(int u, int v, bool directed = false)
-    {
+        cin >> u >> v >> t;
         adj[u].push_back(v);
-        if(!directed) adj[v].push_back(u);
+        adj[v].push_back(u);
     }
-
-    void dfs(int node)
-    {
-        vis[node] = true;
-
-        for(int child : adj[node])
-        {
-            if(!vis[child])
-            {
-                parent[child] = node;
-                dist[child] = dist[node] + 1; // distance from root
-                dfs(child);
-            }
-        }
-    }
-
-
-    int connected_components()
-    {
-        int cnt = 0;
-        fill(vis.begin(), vis.end(), false);
-
-        for (int i = 0; i < n; i++)
-        {
-            if (!vis[i])
-            {
-                dfs(i);
-                cnt++;
-            }
-        }
-
-        return cnt;
-    }
-
-
-    vector<int> shortest_path(int src) // tree, unwighted graphs
-    {
-        fill(vis.begin(), vis.end(), false);
-        fill(dist.begin(), dist.end(), 0);
-        fill(parent.begin(), parent.end(), -1);
-        dfs(src);
-        return dist; // distance from src
-    }
-
-
-    void topo_dfs(int node)
-    {
-        vis[node] = true;
-
-        for(int child : adj[node])
-        {
-            if(!vis[child]) topo_dfs(child);
-        }
-
-        topo.push_back(node);
-    }
-
-    vector<int> topological_sort()
-    {
-        fill(vis.begin(), vis.end(), false);
-        topo.clear();
-
-        for(int i = 0; i < n; i++)
-        {
-            if(!vis[i]) topo_dfs(i);
-        }
-
-        reverse(topo.begin(), topo.end());
-        return topo;
-    }
-};
-
-
-void solve()
+}
+ 
+vector<int> vis;
+vector<int> color;
+bool cycle = false;
+ 
+void dfs(int node)
 {
-    int n, m;
-    cin >> n >> m;
-
-    DFS g(n);
-
-    for(int i = 0; i < m; i++)
+    vis[node] = 1;
+    for(int ni : adj[node])
     {
-        int u, v;
-        cin >> u >> v;
-        u--, v--;
-        g.addEdge(u, v);
+        if(!vis[ni]) dfs(ni);
     }
-
-    cout << "Connected Components : " << nl;
-    cout << g.connected_components() << nl; //connected components
-
-
-    vector<int> dist = g.shortest_path(0);
-
-    cout << "Distances from node 1:" << nl;
-    for(int i = 0; i < n; i++)
+ 
+}
+ 
+ 
+void dfs_tree(int u, int p)
+{ // for a tree (just parent and child relationship)
+    for(int v : adj[u])
     {
-        cout << dist[i] << nl;
+        if(v == p) continue;
+        dfs_tree(v, u);
     }
-
-
-    cout << "Parents:" << nl;
-    for(int i = 0; i < n; i++)
+}
+ 
+ 
+int dfsCount(int u)
+{  // count components (neighbors and neighbors of the neighbors) for a node
+    vis[u] = 1;
+    int cnt = 1;
+    for(int v : adj[u])
     {
-        if(g.parent[i] == -1) cout << "None";
-        else cout << g.parent[i] + 1;
+        if(!vis[v]) 
+        cnt += dfsCount(v);
+    }
+    return cnt;
+}
+ 
+bool dfs_cycle(int u)
+{
+    color[u] = 1; // GRAY
+    for(int v : adj[u])
+    {
+        if(color[v] == 0)
+        {
+            if(dfs_cycle(v)) return true;
+        }
+        else if(color[v] == 1) return true;
+    }
+    color[u] = 2; // BLACK
+    return false;
+}
+ 
+string grid[2001];
+bool vis2d[2001][2001];
+int di[] = {-1, 1, 0, 0, -1, 1, 1, -1};
+int dj[] = {0, 0, -1, 1, -1, 1, -1, 1};
+int rows, cols;
+ 
+bool is_valid(int r, int c)
+{
+    return (r >= 0 && r < rows && c >= 0 && c < cols && !vis2d[r][c] && grid[r][c] == '.');
+}
+ 
+ 
+ 
+void dfs_grid(int r, int c)
+{
+    vis2d[r][c] = true;
+    for(int k = 0; k < 4; k++)
+    {
+        int nr = r + di[k];
+        int nc = c + dj[k];
+        if(is_valid(nr, nc)) dfs_grid(nr, nc);
+    }
+}
+ 
+ 
+template <int N, int M>
+struct ForwardStar
+{
+    //In case of weighted graph, put back all removed w.
+    int head[N];
+    int to[M];
+    int nxt[M];
+    //int wt[M];
+    int ne;
+ 
+    void init(int n)
+    {
+        ne = 0;
+        fill(head, head + n + 1, -1); 
+    }
+ 
+    // Removed the 'int w' parameter
+    void addEdge(int u, int v)
+    {
+        to[ne] = v;
+        //wt[ne] = w;
+        nxt[ne] = head[u];
+        head[u] = ne++;
+    }
+ 
+    // Removed the 'int w' parameter
+    void addBiEdge(int u, int v)
+    {
+        addEdge(u, v);
+        addEdge(v, u);
+    }
+ 
+    void traverse(int u)
+    {
+        cout << "Neighbors of node " << u << ": ";
+        
+        for(int e = head[u]; e != -1; e = nxt[e])
+        {
+            int v = to[e];
+            //int w = wt[e];
+            cout << v << " ";
+        }
         cout << nl;
     }
-
-
-    cout << "Topological Sort:" << nl;
-
-    vector<int> topo = g.topological_sort();
-    for(int x : topo) cout << x + 1 << " ";
-    cout << nl;
-}
-
-
-
-signed main()
+};
+ 
+ 
+int dfsDepth(int u)
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-    cout.tie(nullptr);
-    int tc = 1;
-    // cin >> tc;
-    while(tc--)
+    int maxx = 0;
+    for(auto v : adj[u])
     {
-        solve();
-        if(tc) cout << nl;
+        maxx = max(maxx, dfsDepth(v));
     }
-    return 0;
+    return maxx + 1;
 }
+ 
