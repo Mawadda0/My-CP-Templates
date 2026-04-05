@@ -25,106 +25,79 @@ using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_ord
 
 // "سُبْحَانَكَ لا عِلْمَ لَنَا إِلَّا مَا عَلَّمْتَنَا إِنَّكَ أَنْتَ الْعَلِيمُ الْحَكِيمُ"
 
-void solve()
+struct Edge
 {
-    // this implementation solves a problem needs to detect if there is a negative cycle and print it
-    int n, m; // n = number of nodes, m = number of edges
-    cin >> n >> m;
-    
-    vector<int> dist(n + 5, INF); // distance array initialized to INF
-    vector<int> par(n + 5, -1); // parent array to reconstruct paths
-    
-    // Store edges as [from, to, weight]
-    vector<vector<int>> adj(m, vector<int>(3));
-    
-    // Read all edges
+    int u, v, w;
+};
+
+vector<Edge> read_graph(int m)
+{
+    vector<Edge> edges(m);
     for(int i = 0; i < m; i++)
     {
-        int fr, to, wi; // from, to, weight
-        cin >> fr >> to >> wi;
-        adj[i][0] = fr, adj[i][1] = to, adj[i][2] = wi;
+        cin >> edges[i].u >> edges[i].v >> edges[i].w;
     }
-    
-    dist[1] = 0; // Set distance of source node (node 1) to 0
-    
-    // Bellman-Ford main loop: relax edges (n-1) times
+    return edges;
+}
+
+// Bellman-Ford
+void bellman_ford(int n, const vector<Edge> &edges, vector<int> &dist, vector<int> &par)
+{
+    dist[1] = 0;
+
     for(int i = 0; i < n - 1; i++)
     {
-        for(int j = 0; j < m; j++)
+        for(auto [u, v, w] : edges)
         {
-            int fr = adj[j][0];
-            int to = adj[j][1];
-            int wi = adj[j][2];
-
-            // Relaxation condition
-            if(dist[fr] + wi < dist[to])
+            if(dist[u] < INF && dist[u] + w < dist[v])
             {
-                dist[to] = dist[fr] + wi;
-                par[to] = fr; // Update parent for path reconstruction
+                dist[v] = dist[u] + w;
+                par[v] = u;
             }
         }
     }
-    
-    bool is_cycle = false; // Flag to detect negative cycles
-    int node = 0; // Node affected by negative cycle
-    
-    // Check for negative cycles by relaxing one more time
-    for(int i = 0; i < m; i++)
+}
+
+
+int detect_cycle(int n, const vector<Edge> &edges, vector<int> &dist, vector<int> &par)
+{
+    int node = -1;
+
+    for(auto [u, v, w] : edges)
     {
-        int fr = adj[i][0];
-        int to = adj[i][1];
-        int wi = adj[i][2];
-        
-        // If we can still relax, negative cycle exists
-        if(dist[fr] + wi < dist[to])
+        if(dist[u] < INF && dist[u] + w < dist[v])
         {
-            is_cycle = true;
-            dist[to] = dist[fr] + wi;
-            par[to] = fr; 
-            node = to; // Mark a node affected by the cycle
+            dist[v] = dist[u] + w;
+            par[v] = u;
+            node = v;
         }
     }
-    
-    // If no negative cycle found
-    if(!is_cycle) return void(cout << "NO");
-    
-    // Find a node that's part of the negative cycle
-    // Move back n steps to ensure we're inside the cycle
+
+    if(node == -1) return -1;
+
+    // ندخل جوه cycle
     for(int i = 0; i < n; i++)
     {
         node = par[node];
     }
-    
-    // Reconstruct the negative cycle
-    vector<int> cy; // Cycle nodes
-    int cur = node;
-    cy.push_back(cur);
-    
-    // Traverse the cycle until we return to the starting node
-    for(int i = par[cur]; i != node; i = par[i])
-    {
-        cy.push_back(i);
-    }
-    cy.push_back(node); // Complete the cycle
-    reverse(cy.begin(), cy.end()); // Reverse to get correct order
-    
-    // Output the result
-    cout << "YES" << nl;
-    for(int i = 0; i < sz(cy); i++)
-    {
-        cout << cy[i] << " ";
-    }
+
+    return node;
 }
 
-signed main()
+
+vector<int> get_cycle(int start, const vector<int> &par)
 {
-    ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
-    int tc = 1;
-    //cin >> tc;
-    while(tc--)
+    vector<int> cycle;
+    int cur = start;
+
+    cycle.push_back(cur);
+    for(int v = par[cur]; v != start; v = par[v])
     {
-        solve();
-        if(tc) cout << nl;
+        cycle.push_back(v);
     }
-    return 0;
+    cycle.push_back(start);
+
+    reverse(all(cycle));
+    return cycle;
 }
+
