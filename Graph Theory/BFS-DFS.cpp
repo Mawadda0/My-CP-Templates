@@ -23,121 +23,189 @@ template <class T>
 using ordered_multiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 // "سُبْحَانَكَ لا عِلْمَ لَنَا إِلَّا مَا عَلَّمْتَنَا إِنَّكَ أَنْتَ الْعَلِيمُ الْحَكِيمُ"
+const int N = 2e5 + 5;
 
-const int N = 200005;
-
-vector<int> gr[N];
-vector<bool> vis;
-
-void dfs_itr(int node) // dfs iterative
+// -- DFS IMPLEMENTATION --
+struct DFS
 {
-    stack<int> st;
-    st.push(node);
-    vis[node] = 1;
+    int n;
+    vector<int> adj[N];
+    vector<bool> vis;
+    vector<int> parent;
+    vector<int> topo;
+    vector<int> dist;
 
-    while (!st.empty())
+    DFS(int n)
     {
-        int tp = st.top();
-        st.pop();
-        cout << tp << " ";
+        this->n = n;
+        vis.assign(n, false);
+        parent.assign(n, -1);
+        dist.assign(n, 0);
+    }
 
-        for (int i : gr[tp])
+    void addEdge(int u, int v, bool directed = false)
+    {
+        adj[u].push_back(v);
+        if(!directed) adj[v].push_back(u);
+    }
+
+    void dfs(int node)
+    {
+        vis[node] = true;
+
+        for(int child : adj[node])
         {
-            if (!vis[i])
+            if(!vis[child])
             {
-                st.push(i);
-                vis[i] = 1;
+                parent[child] = node;
+                dist[child] = dist[node] + 1; // distance from root
+                dfs(child);
             }
         }
     }
-    cout << nl;
-}
 
-void dfs_rec(int node) // dfs recursive
-{
-    vis[node] = 1;
-    cout << node << " ";
 
-    for (int i : gr[node])
+    int connected_components()
     {
-        if (!vis[i])
-        {
-            dfs_rec(i);
-        }
-    }
-}
+        int cnt = 0;
+        fill(vis.begin(), vis.end(), false);
 
-void bfs_itr(int node) // bfs iterative
-{
-    queue<int> q;
-    q.push(node);
-    vis[node] = 1;
-
-    while (!q.empty())
-    {
-        int tp = q.front();
-        q.pop();
-        cout << tp << " ";
-
-        for (int i : gr[tp])
+        for (int i = 0; i < n; i++)
         {
             if (!vis[i])
             {
-                q.push(i);
-                vis[i] = 1;
+                dfs(i);
+                cnt++;
+            }
+        }
+
+        return cnt;
+    }
+
+
+    vector<int> shortest_path(int src) // tree, unwighted graphs
+    {
+        fill(vis.begin(), vis.end(), false);
+        fill(dist.begin(), dist.end(), 0);
+        fill(parent.begin(), parent.end(), -1);
+        dfs(src);
+        return dist; // distance from src
+    }
+
+
+    void topo_dfs(int node)
+    {
+        vis[node] = true;
+
+        for(int child : adj[node])
+        {
+            if(!vis[child]) topo_dfs(child);
+        }
+
+        topo.push_back(node);
+    }
+
+    vector<int> topological_sort()
+    {
+        fill(vis.begin(), vis.end(), false);
+        topo.clear();
+
+        for(int i = 0; i < n; i++)
+        {
+            if(!vis[i]) topo_dfs(i);
+        }
+
+        reverse(topo.begin(), topo.end());
+        return topo;
+    }
+};
+
+// -- BFS IMPLEMENTATION --
+struct BFS
+{
+    int n;
+    vector<int> adj[N];
+    vector<bool> vis;
+    vector<int> parent;
+    vector<int> dist;
+
+    BFS(int n)
+    {
+        this->n = n;
+        vis.assign(n, false);
+        parent.assign(n, -1);
+        dist.assign(n, -1); // -1 = not reachable
+    }
+
+    void addEdge(int u, int v, bool directed = false)
+    {
+        adj[u].push_back(v);
+        if(!directed) adj[v].push_back(u);
+    }
+
+    void bfs(int src)
+    {
+        queue<int> q;
+        q.push(src);
+
+        vis[src] = true;
+        dist[src] = 0;
+
+        while(!q.empty())
+        {
+            int node = q.front();
+            q.pop();
+
+            for(int child : adj[node])
+            {
+                if(!vis[child])
+                {
+                    vis[child] = true;
+                    parent[child] = node;
+                    dist[child] = dist[node] + 1;
+                    q.push(child);
+                }
             }
         }
     }
-    cout << nl;
-}
 
-void bfs_rec(int node) // bfs recursive
-{
-    // Still thinking how to implement...
-}
-
-void solve()
-{
-    int n, m;
-    cin >> n >> m;
-
-    vis.assign(n + 1, false);
-
-    for (int i = 1; i <= n; i++)
-        gr[i].clear();
-
-    while (m--)
+    int connected_components()
     {
-        int x, y;
-        cin >> x >> y;
-        gr[x].push_back(y);
-        gr[y].push_back(x);
+        int cnt = 0;
+        fill(vis.begin(), vis.end(), false);
+
+        for(int i = 0; i < n; i++)
+        {
+            if(!vis[i])
+            {
+                bfs(i);
+                cnt++;
+            }
+        }
+
+        return cnt;
     }
 
-    int root = 1;
-
-    dfs_itr(root);
-    fill(all(vis), false);
-
-    dfs_rec(root);
-    fill(all(vis), false);
-
-    cout << nl;
-    bfs_itr(root);
-    fill(all(vis), false);
-}
-
-signed main()
-{
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    int tc = 1;
-    // cin >> tc;
-    while (tc--)
+    vector<int> shortest_path(int src) // correct for unweighted graphs
     {
-        solve();
-        if (tc) cout << nl;
+        fill(vis.begin(), vis.end(), false);
+        fill(dist.begin(), dist.end(), -1);
+        fill(parent.begin(), parent.end(), -1);
+
+        bfs(src);
+        return dist;
     }
-    return 0;
-}
+
+    vector<int> get_path(int src, int dest)
+    {
+        vector<int> path;
+
+        if(dist[dest] == -1) return path; // no path
+
+        for(int v = dest; v != -1; v = parent[v])
+            path.push_back(v);
+
+        reverse(path.begin(), path.end());
+        return path;
+    }
+};
