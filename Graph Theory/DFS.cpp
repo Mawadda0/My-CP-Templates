@@ -173,4 +173,33 @@ int dfsDepth(int u)
     }
     return maxx + 1;
 }
+
+vector<int> topo;
+vector<int> visTopo;
+
+void dfs_topo(int u)
+{
+    visTopo[u] = 1;
+    for(int v : adj[u])
+    {
+        if(!visTopo[v])
+            dfs_topo(v);
+    }
+    topo.push_back(u); 
+}
+
+vector<int> topological_sort(int n)
+{
+    visTopo.assign(n + 1, 0);
+    topo.clear();
+
+    for(int i = 1; i <= n; i++)
+    {
+        if(!visTopo[i])
+            dfs_topo(i);
+    }
+
+    reverse(topo.begin(), topo.end());
+    return topo;
+}
  
