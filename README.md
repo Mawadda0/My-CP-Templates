@@ -18,7 +18,6 @@ This repository contains my daily-use templates in **C++** throughout my competi
 * Fast power & Mod power
 * SPF (Smallest prime factor)
 * Combinatorics (combination and permutation)
-> - I will add more templates in the future
 
 
 ### Graph Theory
@@ -30,12 +29,17 @@ This repository contains my daily-use templates in **C++** throughout my competi
 * Floyed
 * Bellman
 * Kruksal
-* DSU
 
 ### Range Query
 
 * Semgent Tree
 * Segment Tree with Lazy Propagation
+
+### General
+
+* Prefix & 2D Prefix
+> - I will add more templates in the future
+
 
 ---
 
