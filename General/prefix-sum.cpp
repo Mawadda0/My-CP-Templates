@@ -72,3 +72,74 @@ void two_D_prefix(int n, int m, int q, const vector<vector<int>> & a)
         cout << res << nl;
     }
 }
+
+
+vector<int> partial_sum(int n, int q, vector<int> & a) // using difference array 
+{ // add a value from range l to range r
+    vector<int> diff(n, 0);
+    while(q--)
+    {
+        int l, r, val; cin >> l >> r >> val;
+        if(l > r) swap(l, r);
+        l--, r--;
+
+        diff[l] += val;
+        if(r + 1 < n)
+        {
+            diff[r + 1] -= val;
+        }
+    }
+    for(int i = 1; i < n; i++)
+    {
+        diff[i] += diff[i - 1];
+    }
+
+    for(int i = 0; i < n; i++)
+    {
+        a[i] += diff[i];
+    }
+
+    return a;
+}
+
+vector<vector<int>> two_D_partial_sum(int n, int m, int q, vector<vector<int>> & a) // using difference array 
+{ // add a value from (x1, y1) to (x2, y2)
+    vector<vector<int>> diff(n, vector<int> (m, 0));
+    while(q--)
+    {
+        int x1, y1, x2, y2, val; cin >> x1 >> y1 >> x2 >> y2 >> val;
+        if(x1 > x2) swap(x1, x2);
+        if(y1 > y2) swap(y1, y2);
+        
+        diff[x1][y1] += val;
+        if(x2 + 1 < n) diff[x2 + 1][y1] -= val;
+        if(y2 + 1 < m) diff[x1][y2 + 1] -= val;
+        if(x2 + 1 < n && y2 + 1 < m) diff[x2 + 1][y2 + 1] += val;
+    }
+
+    for(int i = 1; i < n; i++)
+    {
+        for(int j = 0; j < m; j++)
+        {
+            diff[i][j] += diff[i - 1][j];
+        }
+    }
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 1; j < m; j++)
+        {
+            diff[i][j] += diff[i][j - 1];
+        }
+    }
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < m; j++)
+        {
+            a[i][j] += diff[i][j];
+        }
+    }
+
+    return a;
+}
