@@ -1,4 +1,4 @@
-# Competitive Programming Templates
+# Competitive Programming 🏁
 
 This repository contains my daily-use templates in **C++** throughout my competitive programming journey.
 
