@@ -74,8 +74,6 @@ int detect_cycle(int n, const vector<Edge> &edges, vector<int> &dist, vector<int
     }
 
     if(node == -1) return -1;
-
-    // ندخل جوه cycle
     for(int i = 0; i < n; i++)
     {
         node = par[node];
